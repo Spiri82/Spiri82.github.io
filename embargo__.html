@@ -195,7 +195,21 @@
 	  color:var(--muted);
 	  font-size:.8rem;
 	  line-height:1.5;
+
+	  display:flex;
+	  gap:12px;
+	  align-items:baseline;
+	  flex-wrap:wrap;
 	}
+	.dochead__meta a{
+	  color:inherit;
+	  text-decoration:none;
+	}
+	.dochead__meta a:hover{
+	  text-decoration:underline;
+	}
+	.dochead__meta .meta-sep{ opacity:.45; }
+	
     .pubnote{
       display:none;
       margin-top:18px;
@@ -304,31 +318,82 @@
 	   ========================= */
 	@media print {
 
+	  /* basis */
+	  body{
+		background:#fff;
+		color:#000;
+	  }
+
+	  /* verberg UI elementen */
+	  .topbar,
+	  .controls,
+	  .seg,
+	  .embargo,
+	  .dochead__meta a,
+	  .dochead__meta .meta-sep{
+		display:none !important;
+	  }
+
+	  /* verwijder kaart-layout */
+	  .wrap{
+		padding:0;
+		max-width:none;
+	  }
+
+	  .paper{
+		border:none;
+		box-shadow:none;
+		padding:0;
+		margin:0;
+	  }
+
+	  /* optimale breedte voor print */
 	  .dochead,
-	  .dochead__meta,
 	  .content,
 	  .signatories{
 		max-width:680px;
-		margin-left:auto;
-		margin-right:auto;
+		margin:0 auto;
 	  }
 
-	  .dochead__meta{
-		margin-top:10pt;
-		margin-bottom:18pt;
-		font-size:9.5pt;
-		line-height:1.35;
-		color:#444;
+	  /* typografie iets compacter */
+	  .content{
+		font-size:11pt;
+		line-height:1.5;
 	  }
 
-	  html[lang="nl"] .dochead__meta::after{
-		content:"";
+	  .dochead__title{
+		font-size:18pt;
 	  }
 
-	  html[lang="fr"] .dochead__meta::after{
-		content:"";
+	  /* voorkom rare page breaks */
+	  h1, h2, h3{
+		page-break-after:avoid;
 	  }
-	}
+
+	  p{
+		orphans:3;
+		widows:3;
+	  }
+
+	  /* links niet onderstrepen in print */
+	  a{
+		text-decoration:none;
+		color:#000;
+	  }
+	  
+	  .dochead,
+		.dochead__meta,
+		.content,
+		.signatories{
+			max-width:680px;
+			margin:0 auto;
+	    }
+
+		.dochead__meta{
+			margin:8px auto 12px auto;
+		}
+	  }
+	  
   </style>
 </head>
 
@@ -362,7 +427,7 @@
 	    <div class="pubnote" id="pubnote"></div>
 	  </header>
 	  
-	  <p class="dochead__meta" id="doc-meta"></p>
+	  <div class="dochead__meta" id="doc-meta"></div>
 
       <article id="content" class="content"></article>
 
@@ -380,6 +445,10 @@
       brief:  { nl: './content/open-brief.nl.md', fr: './content/open-brief.fr.md' },
       opinie: { nl: './content/opinie.nl.md',    fr: './content/opinie.fr.md' }
     };
+	const PDFS = {
+	  brief:  { nl: './pdf/open-brief_nl.pdf', fr: './pdf/open-brief_fr.pdf' },
+	  opinie: { nl: './pdf/opinie_nl.pdf',    fr: './pdf/opinie_fr.pdf' }
+	};
     const SIGNATORIES_CSV = './content/namen.csv';
 
     const OPINION_LINKS = {
@@ -557,7 +626,12 @@
       document.getElementById('stickytitle').textContent = docLabel; // compact, geen herhaling van titel
 
       const metaLine = isFR ? 'Date de publication: 27 mars 2026' : 'Publicatiedatum: 27 maart 2026';
-      document.getElementById('doc-meta').textContent = metaLine;
+		const pdfHref = PDFS[state.doc][state.lang];
+		const pdfLabel = isFR ? 'Télécharger le PDF' : 'PDF downloaden';
+
+		document.getElementById('doc-meta').innerHTML =
+		  `${escapeHTML(metaLine)} <span class="meta-sep">•</span> ` +
+		  `<a href="${pdfHref}" download>${escapeHTML(pdfLabel)}</a>`;
 	  
 	  const toLine = (state.doc === 'brief')
 		  ? (isFR
