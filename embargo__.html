@@ -135,7 +135,7 @@
     /* Document header inside paper */
     .dochead{
       max-width:var(--measure);
-      margin:0 auto 18px auto;
+      margin:0 auto 8px auto;
       padding-bottom:14px;
       border-bottom:1px solid rgba(17,24,39,.08);
     }
@@ -146,10 +146,16 @@
       margin:0 0 6px 0;
     }
     .dochead__title{
-      margin:0;
-      font-size:1.55rem;
-      line-height:1.18;
-      letter-spacing:.1px;
+	  margin:0;
+	  font-size:1.9rem;
+	  line-height:1.12;
+	  margin:0 0 6px 0;
+	}
+	@media (max-width: 760px){
+      .dochead__title{
+        font-size:1.65rem;
+		line-height:1.14;
+	  }
     }
     .dochead__intro{
       margin:10px 0 0 0;
@@ -182,15 +188,14 @@
 	}
 	.embargo strong{ font-weight:700; }
 
-    .dochead__meta{
-      max-width:var(--measure);
-      margin:16px auto 22px auto;
-      font-family:var(--ui);
-      color:var(--muted);
-      font-size:.95rem;
-      line-height:1.5;
-    }
-
+	.dochead__meta{
+	  max-width:var(--measure);
+	  margin:8px auto 16px auto;
+	  font-family:var(--ui);
+	  color:var(--muted);
+	  font-size:.8rem;
+	  line-height:1.5;
+	}
     .pubnote{
       display:none;
       margin-top:18px;
@@ -238,8 +243,8 @@
 
     /* Extra witruimte via classes die we in JS zetten */
     .content p.salutation{
-      margin-top:.2em;
-      margin-bottom:1.8em; /* na “Geachte ministers,” */
+	  margin-top:.1em;
+	  margin-bottom:1.4em;
     }
     .content p.section-lead{
       margin-top:2.2em;    /* voor “De voorgestelde hervormingen bieden …” */
