@@ -304,76 +304,29 @@
 	   ========================= */
 	@media print {
 
-	  /* basis */
-	  body{
-		background:#fff;
-		color:#000;
-	  }
-
-	  /* verberg UI elementen */
-	  .topbar,
-	  .controls,
-	  .seg{
-		display:none !important;
-	  }
-
-	  /* verwijder kaart-layout */
-	  .wrap{
-		padding:0;
-		max-width:none;
-	  }
-
-	  .paper{
-		border:none;
-		box-shadow:none;
-		padding:0;
-		margin:0;
-	  }
-
-	  /* optimale breedte voor print */
 	  .dochead,
+	  .dochead__meta,
 	  .content,
 	  .signatories{
 		max-width:680px;
-		margin:0 auto;
+		margin-left:auto;
+		margin-right:auto;
 	  }
 
-	  /* typografie iets compacter */
-	  .content{
-		font-size:11pt;
-		line-height:1.5;
+	  .dochead__meta{
+		margin-top:10pt;
+		margin-bottom:18pt;
+		font-size:9.5pt;
+		line-height:1.35;
+		color:#444;
 	  }
 
-	  .dochead__title{
-		font-size:18pt;
-	  }
-
-	  /* voorkom rare page breaks */
-	  h1, h2, h3{
-		page-break-after:avoid;
-	  }
-
-	  p{
-		orphans:3;
-		widows:3;
-	  }
-
-	  .signatories{
-		page-break-inside:avoid;
-	  }
-
-	  /* links niet onderstrepen in print */
-	  a{
-		text-decoration:none;
-		color:#000;
-	  }
-	  
 	  html[lang="nl"] .dochead__meta::after{
-		content:" — afgedrukt vanaf budgetforum.be";
+		content:"";
 	  }
 
 	  html[lang="fr"] .dochead__meta::after{
-		content:" — imprimé depuis budgetforum.be";
+		content:"";
 	  }
 	}
   </style>
