@@ -37,6 +37,42 @@
       line-height:1.65;
     }
 
+
+    .sr-only{
+      position:absolute !important;
+      width:1px;
+      height:1px;
+      padding:0;
+      margin:-1px;
+      overflow:hidden;
+      clip:rect(0,0,0,0);
+      white-space:nowrap;
+      border:0;
+    }
+    .skip-link{
+      position:absolute;
+      left:-9999px;
+      top:auto;
+      width:1px;
+      height:1px;
+      overflow:hidden;
+    }
+    .skip-link:focus{
+      left:16px;
+      top:12px;
+      width:auto;
+      height:auto;
+      padding:8px 10px;
+      z-index:1000;
+      background:var(--paper);
+      color:var(--text);
+      border:1px solid var(--line);
+      border-radius:10px;
+      font-family:var(--ui);
+      text-decoration:none;
+      box-shadow:var(--shadow);
+    }
+
     /* Sticky topbar: functioneel, niet inhoudelijk */
     .topbar{
       position:sticky;
@@ -113,6 +149,16 @@
     }
     .seg button:hover{
       background:rgba(17,24,39,.04);
+    }
+
+    a:focus-visible,
+    button:focus-visible{
+      outline:2px solid currentColor;
+      outline-offset:3px;
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      html{ scroll-behavior:auto; }
     }
 
     /* Paper */
@@ -407,25 +453,27 @@
 </head>
 
 <body>
+  <a class="skip-link" id="skip-link" href="#content">Ga naar inhoud</a>
+  <div id="sr-status" class="sr-only" aria-live="polite" aria-atomic="true"></div>
   <header class="topbar">
     <div class="topbar__inner">
       <div class="stickytitle" id="stickytitle">Open brief</div>
 
       <div class="controls" role="group" aria-label="Selecties">
-        <div class="seg seg--doc" aria-label="Document">
-          <button data-doc="brief"  id="btn-doc-brief">Open brief</button>
-          <button data-doc="opinie" id="btn-doc-opinie">Opinie</button>
+        <div class="seg seg--doc" role="group" aria-label="Document">
+          <button type="button" data-doc="brief" id="btn-doc-brief" aria-controls="content signatories-list" aria-pressed="true">Open brief</button>
+          <button type="button" data-doc="opinie" id="btn-doc-opinie" aria-controls="content signatories-list" aria-pressed="false">Opinie</button>
         </div>
 
-        <div class="seg seg--lang" aria-label="Taal">
-          <button data-lang="nl" id="btn-lang-nl">NL</button>
-          <button data-lang="fr" id="btn-lang-fr">FR</button>
+        <div class="seg seg--lang" role="group" aria-label="Taal">
+          <button type="button" data-lang="nl" id="btn-lang-nl" aria-controls="content signatories-list" aria-pressed="true">NL</button>
+          <button type="button" data-lang="fr" id="btn-lang-fr" aria-controls="content signatories-list" aria-pressed="false">FR</button>
         </div>
       </div>
     </div>
   </header>
 
-  <main class="wrap">
+  <main class="wrap" id="main-content">
     <section class="paper">
 	  <div class="embargo" id="embargo" role="note" aria-live="polite"></div>
 	  <header class="dochead">
@@ -438,12 +486,12 @@
 	  
 	  <div class="dochead__meta" id="doc-meta"></div>
 
-      <article id="content" class="content"></article>
+      <article id="content" class="content" tabindex="-1" aria-busy="false"></article>
 
       <section class="signatories" aria-labelledby="signatories-title">
         <h2 id="signatories-title">Ondertekenaars</h2>
         <ol id="signatories-list"></ol>
-        <div class="signatories__error" id="signatories-error"></div>
+        <div class="signatories__error" id="signatories-error" role="status" aria-live="polite"></div>
         <p class="presscontact" id="presscontact"></p>
       </section>
     </section>
@@ -520,6 +568,13 @@
 
     const md = window.markdownit({ html: false, linkify: true, typographer: true });
 
+    function announce(message) {
+      const el = document.getElementById('sr-status');
+      if (!el) return;
+      el.textContent = '';
+      window.setTimeout(() => { el.textContent = message; }, 20);
+    }
+
     async function loadAndRender() {
       setActiveButtons();
       setHeaderCopy();
@@ -527,11 +582,20 @@
 	  await renderEmbargoBanner();
 
       const path = SOURCES[state.doc][state.lang];
-      const res = await fetch(path, { cache: 'no-store' });
       const contentEl = document.getElementById('content');
+      const docLabel = state.doc === 'brief'
+        ? (state.lang === 'fr' ? 'lettre ouverte' : 'open brief')
+        : (state.lang === 'fr' ? 'tribune' : 'opinie');
+      announce(state.lang === 'fr' ? `Chargement de la ${docLabel}.` : `${docLabel[0].toUpperCase() + docLabel.slice(1)} laden.`);
+      contentEl.setAttribute('aria-busy', 'true');
+
+      const res = await fetch(path, { cache: 'no-store' });
 
       if (!res.ok) {
-        contentEl.textContent = `Kon bestand niet laden: ${path}`;
+        contentEl.textContent = state.lang === 'fr'
+          ? `Impossible de charger le fichier : ${path}`
+          : `Kon bestand niet laden: ${path}`;
+        announce(state.lang === 'fr' ? `Impossible de charger la ${docLabel}.` : `${docLabel[0].toUpperCase() + docLabel.slice(1)} kon niet worden geladen.`);
       } else {
         const mdText = await res.text();
         const rawHtml = md.render(mdText);
@@ -540,7 +604,9 @@
 
         numberTopHeadings(contentEl, 4);
         applyExtraWhitespace(contentEl);
+        announce(state.lang === 'fr' ? `La ${docLabel} est chargée.` : `${docLabel[0].toUpperCase() + docLabel.slice(1)} geladen.`);
       }
+      contentEl.setAttribute('aria-busy', 'false');
 
       localStorage.setItem('lang', state.lang);
       localStorage.setItem('doc', state.doc);
@@ -608,13 +674,26 @@
 	}
 
     function setActiveButtons() {
-      document.querySelectorAll('[data-lang]').forEach(b => b.classList.toggle('is-active', b.dataset.lang === state.lang));
-      document.querySelectorAll('[data-doc]').forEach(b => b.classList.toggle('is-active', b.dataset.doc === state.doc));
+      document.querySelectorAll('[data-lang]').forEach(b => {
+        const active = b.dataset.lang === state.lang;
+        b.classList.toggle('is-active', active);
+        b.setAttribute('aria-pressed', active ? 'true' : 'false');
+      });
+      document.querySelectorAll('[data-doc]').forEach(b => {
+        const active = b.dataset.doc === state.doc;
+        b.classList.toggle('is-active', active);
+        b.setAttribute('aria-pressed', active ? 'true' : 'false');
+      });
       document.documentElement.lang = state.lang;
     }
 
     function setHeaderCopy() {
       const isFR = state.lang === 'fr';
+
+      document.querySelector('.controls').setAttribute('aria-label', isFR ? 'Sélections' : 'Selecties');
+      document.querySelector('.seg--doc').setAttribute('aria-label', isFR ? 'Document' : 'Document');
+      document.querySelector('.seg--lang').setAttribute('aria-label', isFR ? 'Langue' : 'Taal');
+      document.getElementById('skip-link').textContent = isFR ? 'Aller au contenu' : 'Ga naar inhoud';
 
       document.getElementById('btn-doc-brief').textContent  = isFR ? 'Lettre ouverte' : 'Open brief';
       document.getElementById('btn-doc-opinie').textContent = isFR ? 'Tribune' : 'Opinie';
@@ -640,7 +719,7 @@
 
 		document.getElementById('doc-meta').innerHTML =
 		  `${escapeHTML(metaLine)} <span class="meta-sep">•</span> ` +
-		  `<a href="${pdfHref}" download>${escapeHTML(pdfLabel)}</a>`;
+		  `<a href="${pdfHref}" download aria-label="${escapeHTML(pdfLabel)} (${state.doc.toUpperCase()}, ${state.lang.toUpperCase()})">${escapeHTML(pdfLabel)}</a>`;
 	  
 	  const toLine = (state.doc === 'brief')
 		  ? (isFR
@@ -814,10 +893,15 @@
       }
     }
 
+    function scrollToTopForDocSwitch() {
+      const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+    }
+
     document.getElementById('btn-lang-nl').addEventListener('click', () => { state.lang = 'nl'; loadAndRender(); });
     document.getElementById('btn-lang-fr').addEventListener('click', () => { state.lang = 'fr'; loadAndRender(); });
-    document.getElementById('btn-doc-brief').addEventListener('click', () => { state.doc = 'brief'; window.scrollTo({ top: 0, behavior: 'smooth' }); loadAndRender(); });
-    document.getElementById('btn-doc-opinie').addEventListener('click', () => { state.doc = 'opinie'; window.scrollTo({ top: 0, behavior: 'smooth' }); loadAndRender(); });
+    document.getElementById('btn-doc-brief').addEventListener('click', () => { state.doc = 'brief'; scrollToTopForDocSwitch(); loadAndRender(); });
+    document.getElementById('btn-doc-opinie').addEventListener('click', () => { state.doc = 'opinie'; scrollToTopForDocSwitch(); loadAndRender(); });
 
     loadAndRender();
   </script>
