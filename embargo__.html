@@ -1,0 +1,708 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Voorstel tot hervorming van het Belgische begrotingsproces</title>
+
+  <link rel="stylesheet" href="site.css" />
+  <script src="https://cdn.jsdelivr.net/npm/markdown-it@14/dist/markdown-it.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3/dist/purify.min.js"></script>
+
+  <style>
+    :root{
+      --bg:#f3f4f6;
+      --paper:#ffffff;
+      --text:#111827;
+      --muted:#4b5563;
+      --line:rgba(17,24,39,.12);
+
+      --shadow:0 18px 45px rgba(17,24,39,.10);
+      --radius:14px;
+
+      --max:980px;
+      --measure:760px;
+
+      --ui: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Liberation Sans", sans-serif;
+      --serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+    }
+
+    *{ box-sizing:border-box; }
+    html{ scroll-behavior:smooth; }
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--text);
+      font-family:var(--serif);
+      line-height:1.65;
+    }
+
+    /* Sticky topbar: functioneel, niet inhoudelijk */
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:10;
+      background:rgba(243,244,246,.92);
+      backdrop-filter: blur(10px);
+      border-bottom:1px solid var(--line);
+    }
+    .topbar__inner{
+      max-width:var(--max);
+      margin:0 auto;
+      padding:10px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+    }
+    .stickytitle{
+      min-width:0;
+      font-family:var(--ui);
+      color:var(--muted);
+      font-size:.92rem;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .controls{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      font-family:var(--ui);
+    }
+
+    /* Mobile header: verberg redundante label, zet doc-selector links */
+    @media (max-width: 520px){
+      .stickytitle{ display:none; }
+      .controls{
+        width:100%;
+        justify-content:space-between;
+        flex-wrap:nowrap;
+      }
+      .seg--doc{ margin-right:auto; }
+      .dochead__kicker{ display:none; }
+    }
+
+
+    .seg{
+      display:inline-flex;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background:var(--paper);
+      overflow:hidden;
+    }
+    .seg button{
+      appearance:none;
+      border:0;
+      background:transparent;
+      cursor:pointer;
+      padding:7px 11px;
+      font:inherit;
+      font-size:.92rem;
+      color:var(--text);
+    }
+    .seg button + button{ border-left:1px solid var(--line); }
+
+    /* Duidelijkere active state */
+    .seg button.is-active{
+      background:rgba(17,24,39,.08);
+      font-weight:600;
+      box-shadow: inset 0 0 0 1px rgba(17,24,39,.10);
+    }
+    .seg button:hover{
+      background:rgba(17,24,39,.04);
+    }
+
+    /* Paper */
+    .wrap{
+      max-width:var(--max);
+      margin:0 auto;
+      padding:22px 16px 48px 16px;
+    }
+    .paper{
+      background:var(--paper);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:40px 44px 34px 44px;
+    }
+    @media (max-width: 760px){
+      .paper{ padding:26px 18px; }
+    }
+
+    /* Document header inside paper */
+    .dochead{
+      max-width:var(--measure);
+      margin:0 auto 18px auto;
+      padding-bottom:14px;
+      border-bottom:1px solid rgba(17,24,39,.08);
+    }
+    .dochead__kicker{
+      font-family:var(--ui);
+      color:var(--muted);
+      font-size:.92rem;
+      margin:0 0 6px 0;
+    }
+    .dochead__title{
+      margin:0;
+      font-size:1.55rem;
+      line-height:1.18;
+      letter-spacing:.1px;
+    }
+    .dochead__intro{
+      margin:10px 0 0 0;
+      font-family:var(--ui);
+      color:var(--muted);
+      font-size:.98rem;
+      line-height:1.5;
+    }
+	
+	.dochead__to{
+	  margin:10px 0 0 0;
+	  font-family:var(--ui);
+	  color:var(--muted);
+	  font-size:.98rem;
+	  line-height:1.5;
+	}
+	.dochead__to strong{ font-weight:600; }
+	
+	.embargo{
+	  display:none;
+	  max-width:var(--measure);
+	  margin:0 auto 16px auto;
+	  padding:12px 14px;
+	  border:1px solid rgba(17,24,39,.18);
+	  background:rgba(245,158,11,.10);
+	  border-radius:12px;
+	  font-family:var(--ui);
+	  color:var(--text);
+	  font-size:.95rem;
+	}
+	.embargo strong{ font-weight:700; }
+
+    .dochead__meta{
+      max-width:var(--measure);
+      margin:16px auto 22px auto;
+      font-family:var(--ui);
+      color:var(--muted);
+      font-size:.95rem;
+      line-height:1.5;
+    }
+
+    .pubnote{
+      display:none;
+      margin-top:18px;
+      padding:10px 12px;
+      border-left:3px solid rgba(17,24,39,.20);
+      background:rgba(17,24,39,.03);
+      border-radius:10px;
+      font-family:var(--ui);
+      color:var(--muted);
+      font-size:.95rem;
+    }
+    .pubnote a{
+      color:inherit;
+      text-decoration:underline;
+      text-underline-offset:2px;
+    }
+
+    /* Content */
+    .content{
+      max-width:var(--measure);
+      margin:0 auto;
+      font-size:1.03rem;
+    }
+    .content p{ margin:0 0 1.05em 0; }
+    .content a{ color:inherit; text-decoration:underline; text-underline-offset:2px; }
+
+    .content h1, .content h2, .content h3{
+      line-height:1.25;
+      margin:1.6em 0 .55em 0;
+      letter-spacing:.1px;
+    }
+    .content h1{
+      font-size:1.25rem;
+      margin-top:1.9em;
+      padding-top:14px;
+      border-top:1px solid rgba(17,24,39,.10);
+    }
+    .content h1:first-child{
+      border-top:0;
+      padding-top:0;
+      margin-top:0;
+    }
+    .content h2{ font-size:1.08rem; }
+    .content h3{ font-size:1.02rem; }
+
+    /* Extra witruimte via classes die we in JS zetten */
+    .content p.salutation{
+      margin-top:.2em;
+      margin-bottom:1.8em; /* na “Geachte ministers,” */
+    }
+    .content p.section-lead{
+      margin-top:2.2em;    /* voor “De voorgestelde hervormingen bieden …” */
+    }
+
+    /* Signatories */
+    .signatories{
+      max-width:var(--measure);
+      margin:26px auto 0 auto;
+      padding-top:18px;
+      border-top:1px solid rgba(17,24,39,.08);
+      font-family:var(--ui);
+    }
+    .signatories h2{
+      margin:0 0 10px 0;
+      font-size:1rem;
+      letter-spacing:.2px;
+    }
+    .signatories ol{
+      margin:0;
+      padding-left:22px;
+      columns:2;
+      column-gap:28px;
+    }
+    .signatories li{
+      break-inside:avoid;
+      margin:6px 0;
+    }
+    .org{
+      color:var(--muted);
+      font-weight:400;
+    }
+    .signatories__error{
+      display:none;
+      margin-top:10px;
+      color:var(--muted);
+      font-size:.95rem;
+    }
+    .presscontact{
+      margin:16px 0 0 0;
+      padding-top:14px;
+      border-top:1px solid rgba(17,24,39,.08);
+      font-size:.95rem;
+      color:var(--muted);
+    }
+    .presscontact a{
+      color:inherit;
+      text-decoration:underline;
+      text-underline-offset:2px;
+    }
+    @media (max-width: 900px){
+      .signatories ol{ columns:1; }
+    }
+	
+	
+  </style>
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="topbar__inner">
+      <div class="stickytitle" id="stickytitle">Open brief</div>
+
+      <div class="controls" role="group" aria-label="Selecties">
+        <div class="seg seg--doc" aria-label="Document">
+          <button data-doc="brief"  id="btn-doc-brief">Open brief</button>
+          <button data-doc="opinie" id="btn-doc-opinie">Opinie</button>
+        </div>
+
+        <div class="seg seg--lang" aria-label="Taal">
+          <button data-lang="nl" id="btn-lang-nl">NL</button>
+          <button data-lang="fr" id="btn-lang-fr">FR</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="paper">
+	  <div class="embargo" id="embargo" role="note" aria-live="polite"></div>
+      <header class="dochead">
+        <p class="dochead__kicker" id="doc-kicker">Open brief</p>
+        <h1 class="dochead__title" id="doc-title">Voorstel tot hervorming van het Belgische begrotingsproces</h1>
+		<p class="dochead__to" id="doc-to"></p>
+        <p class="dochead__intro" id="doc-intro"></p>
+        <div class="pubnote" id="pubnote"></div>
+      </header>
+	  
+	  <p class="dochead__meta" id="doc-meta"></p>
+
+      <article id="content" class="content"></article>
+
+      <section class="signatories" aria-labelledby="signatories-title">
+        <h2 id="signatories-title">Ondertekenaars</h2>
+        <ol id="signatories-list"></ol>
+        <div class="signatories__error" id="signatories-error"></div>
+        <p class="presscontact" id="presscontact"></p>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    const SOURCES = {
+      brief:  { nl: './content/open-brief.nl.md', fr: './content/open-brief.fr.md' },
+      opinie: { nl: './content/opinie.nl.md',    fr: './content/opinie.fr.md' }
+    };
+    const SIGNATORIES_CSV = './content/namen.csv';
+
+    const OPINION_LINKS = {
+      nl: [
+        { label: 'De Tijd', href: '#link-de-tijd' },
+        { label: 'Knack',  href: '#link-knack' }
+      ],
+      fr: [
+        { label: "L'Echo", href: '#link-lecho' },
+        { label: 'Le Vif', href: '#link-levif' }
+      ]
+    };
+
+    const INTRO = {
+      nl: {
+        brief: "Open brief met vier voorstellen om het Belgische begrotingsproces structureel te versterken.",
+        opinie:""
+      },
+      fr: {
+        brief: "Lettre ouverte avec quatre propositions pour renforcer durablement le processus budgétaire belge.",
+        opinie:""
+      }
+    };
+
+    // Phrases to add whitespace around (NL/FR)
+    const SPACING_MARKERS = {
+      nl: {
+        salutationStarts: ["Geachte ministers"],
+        sectionLeadStarts: ["De voorgestelde hervormingen bieden","Met de meeste hoogachting"]
+      },
+      fr: {
+        salutationStarts: ["Messieurs les ministres"],sectionLeadStarts: ["Les réformes proposées", "Avec nos sincères salutations"]
+      }
+    };
+
+    function normalizeLang(lang) {
+      const l = (lang || '').toLowerCase();
+      if (l.startsWith('fr')) return 'fr';
+      if (l.startsWith('nl')) return 'nl';
+      return 'nl';
+    }
+    function initialLang() {
+      const url = new URL(window.location.href);
+      const qp = url.searchParams.get('lang');
+      if (qp) return normalizeLang(qp);
+      const saved = localStorage.getItem('lang');
+      if (saved) return normalizeLang(saved);
+      const nav = (navigator.languages && navigator.languages.length) ? navigator.languages[0] : navigator.language;
+      return normalizeLang(nav);
+    }
+    function initialDoc() {
+      const url = new URL(window.location.href);
+      const qp = url.searchParams.get('doc');
+      if (qp === 'opinie' || qp === 'brief') return qp;
+      const saved = localStorage.getItem('doc');
+      if (saved === 'opinie' || saved === 'brief') return saved;
+      return 'brief';
+    }
+    let state = { lang: initialLang(), doc: initialDoc() };
+
+    const md = window.markdownit({ html: false, linkify: true, typographer: true });
+
+    async function loadAndRender() {
+      setActiveButtons();
+      setHeaderCopy();
+      renderPubNote();
+	  await renderEmbargoBanner();
+
+      const path = SOURCES[state.doc][state.lang];
+      const res = await fetch(path, { cache: 'no-store' });
+      const contentEl = document.getElementById('content');
+
+      if (!res.ok) {
+        contentEl.textContent = `Kon bestand niet laden: ${path}`;
+      } else {
+        const mdText = await res.text();
+        const rawHtml = md.render(mdText);
+        const cleanHtml = DOMPurify.sanitize(rawHtml);
+        contentEl.innerHTML = cleanHtml;
+
+        numberTopHeadings(contentEl, 4);
+        applyExtraWhitespace(contentEl);
+      }
+
+      localStorage.setItem('lang', state.lang);
+      localStorage.setItem('doc', state.doc);
+      const url = new URL(window.location.href);
+      url.searchParams.set('lang', state.lang);
+      url.searchParams.set('doc', state.doc);
+      window.history.replaceState({}, '', url);
+
+      await loadSignatories();
+    }
+	
+	const EMBARGO_END_ISO = "2026-03-27T06:00:00+01:00"; // België op die datum: CET
+
+	async function getAuthoritativeNow() {
+	  // 1) Probeer server time via Date header (HEAD op huidige pagina)
+	  try {
+		const r = await fetch(window.location.href, { method: "HEAD", cache: "no-store" });
+		const dateHdr = r.headers.get("date");
+		if (dateHdr) {
+		  const d = new Date(dateHdr); // altijd parsebaar (RFC 7231)
+		  if (!isNaN(d.getTime())) return d;
+		}
+	  } catch (e) {
+		// ignore -> fallback
+	  }
+
+	  // 2) Fallback: publieke time API (Brussels)
+	  try {
+		const r = await fetch("https://worldtimeapi.org/api/timezone/Europe/Brussels", { cache: "no-store" });
+		if (r.ok) {
+		  const data = await r.json();
+		  // data.datetime bevat offset, bv "2026-03-05T12:34:56.789+01:00"
+		  const d = new Date(data.datetime);
+		  if (!isNaN(d.getTime())) return d;
+		}
+	  } catch (e) {
+		// ignore -> last resort
+	  }
+
+	  // 3) Last resort: browser time (alleen als alles faalt)
+	  return new Date();
+	}
+
+	async function renderEmbargoBanner() {
+	  const el = document.getElementById("embargo");
+	  if (!el) return;
+
+	  const now = await getAuthoritativeNow();
+	  const embargoEnd = new Date(EMBARGO_END_ISO);
+
+	  const underEmbargo = now.getTime() < embargoEnd.getTime();
+
+	  if (!underEmbargo) {
+		el.style.display = "none";
+		el.innerHTML = "";
+		return;
+	  }
+
+	  const isFR = state.lang === "fr";
+	  el.innerHTML = isFR
+		? `<strong>Sous embargo</strong> jusqu’au vendredi 27 mars 2026 à 6 h 00 (heure belge).`
+		: `<strong>Onder embargo</strong> tot vrijdag 27 maart 2026, 06:00 (Belgische tijd).`;
+
+	  el.style.display = "block";
+	}
+
+    function setActiveButtons() {
+      document.querySelectorAll('[data-lang]').forEach(b => b.classList.toggle('is-active', b.dataset.lang === state.lang));
+      document.querySelectorAll('[data-doc]').forEach(b => b.classList.toggle('is-active', b.dataset.doc === state.doc));
+      document.documentElement.lang = state.lang;
+    }
+
+    function setHeaderCopy() {
+      const isFR = state.lang === 'fr';
+
+      document.getElementById('btn-doc-brief').textContent  = isFR ? 'Lettre ouverte' : 'Open brief';
+      document.getElementById('btn-doc-opinie').textContent = isFR ? 'Tribune' : 'Opinie';
+
+      const mainTitle = isFR
+        ? "Proposition de réforme du processus budgétaire belge"
+        : "Voorstel tot hervorming van het Belgische begrotingsproces";
+
+      document.getElementById('doc-title').textContent = mainTitle;
+      document.title = mainTitle;
+
+      const docLabel = (state.doc === 'brief')
+        ? (isFR ? 'Lettre ouverte' : 'Open brief')
+        : (isFR ? 'Tribune' : 'Opinie');
+
+      document.getElementById('doc-kicker').textContent = docLabel;
+      document.getElementById('doc-intro').textContent = INTRO[state.lang][state.doc];
+      document.getElementById('stickytitle').textContent = docLabel; // compact, geen herhaling van titel
+
+      const metaLine = isFR ? 'Date de publication: 27 mars 2026' : 'Publicatiedatum: 27 maart 2026';
+      document.getElementById('doc-meta').textContent = metaLine;
+	  
+	  const toLine = (state.doc === 'brief')
+		  ? (isFR
+			  ? "À l’attention des ministres belges du Budget."
+			  : "Aan de Belgische ministers van Begroting.")
+		  : ""; // voor opinie leeg
+
+	  document.getElementById('doc-to').innerHTML = toLine;
+
+      document.getElementById('signatories-title').textContent = isFR ? 'Signataires' : 'Ondertekenaars';
+      document.getElementById('presscontact').innerHTML = isFR
+        ? 'Contact presse: <a href="https://www.eur.nl/en/people/kevin-spiritus">Kevin Spiritus</a>'
+        : 'Perscontact: <a href="https://www.eur.nl/en/people/kevin-spiritus">Kevin Spiritus</a>';
+
+      const errEl = document.getElementById('signatories-error');
+      errEl.style.display = 'none';
+      errEl.textContent = '';
+    }
+
+    function renderPubNote() {
+      const pub = document.getElementById('pubnote');
+      if (state.doc !== 'opinie') {
+        pub.style.display = 'none';
+        pub.innerHTML = '';
+        return;
+      }
+      const isFR = state.lang === 'fr';
+      const links = OPINION_LINKS[state.lang] || [];
+      const sep = isFR ? ' et ' : ' en ';
+      const linksHtml = links.map(x => `<a href="${x.href}" style="white-space: nowrap;">${escapeHTML(x.label)}</a>`).join(sep);
+
+      pub.innerHTML = isFR
+        ? `Cette tribune est parue dans ${linksHtml}.`
+        : `Deze opinie verscheen in ${linksHtml}.`;
+
+      pub.style.display = 'block';
+    }
+
+    function escapeHTML(s) {
+      return (s ?? '').toString()
+        .replaceAll('&','&amp;')
+        .replaceAll('<','&lt;')
+        .replaceAll('>','&gt;')
+        .replaceAll('"','&quot;')
+        .replaceAll("'","&#39;");
+    }
+
+    function numberTopHeadings(rootEl, maxCount) {
+      const hs = Array.from(rootEl.querySelectorAll('h1'));
+      const headings = hs.length ? hs : Array.from(rootEl.querySelectorAll('h2'));
+      headings.forEach((h, i) => {
+        const n = i + 1;
+        if (n > maxCount) return;
+        if (!h.id) h.id = `sec-${n}`;
+        const txt = h.textContent.trim();
+        const prefix = `${n}. `;
+        if (!txt.startsWith(prefix)) h.textContent = prefix + txt;
+      });
+    }
+
+    // Adds spacing without editing MD: detect specific paragraphs and add CSS classes.
+    function applyExtraWhitespace(rootEl) {
+      const markers = SPACING_MARKERS[state.lang] || {};
+      const salut = markers.salutationStarts || [];
+      const lead  = markers.sectionLeadStarts || [];
+
+      const ps = Array.from(rootEl.querySelectorAll('p'));
+      ps.forEach(p => {
+        const t = (p.textContent || '').trim();
+        if (!t) return;
+
+        if (salut.some(s => t.startsWith(s))) p.classList.add('salutation');
+        if (lead.some(s => t.startsWith(s)))  p.classList.add('section-lead');
+      });
+    }
+
+    // CSV parsing
+    function detectDelimiter(sampleLine) {
+      const commas = (sampleLine.match(/,/g) || []).length;
+      const semis  = (sampleLine.match(/;/g) || []).length;
+      return (semis > commas) ? ';' : ',';
+    }
+
+    function parseCSV(text) {
+      const lines = text.split(/\n/);
+      const firstNonEmpty = lines.find(l => l.trim().length > 0) || '';
+      const delim = detectDelimiter(firstNonEmpty);
+
+      const rows = [];
+      let row = [];
+      let field = '';
+      let inQuotes = false;
+
+      for (let i = 0; i < text.length; i++) {
+        const c = text[i];
+        const next = text[i + 1];
+
+        if (inQuotes) {
+          if (c === '"' && next === '"') { field += '"'; i++; }
+          else if (c === '"') { inQuotes = false; }
+          else { field += c; }
+        } else {
+          if (c === '"') { inQuotes = true; }
+          else if (c === delim) { row.push(field); field = ''; }
+          else if (c === '\n') {
+            row.push(field); field = '';
+            if (row.some(v => v.trim() !== '')) rows.push(row);
+            row = [];
+          } else if (c === '\r') {
+            // ignore
+          } else {
+            field += c;
+          }
+        }
+      }
+      row.push(field);
+      if (row.some(v => v.trim() !== '')) rows.push(row);
+
+      return rows.map(r => r.map(x => x.trim()));
+    }
+
+    function looksLikeHeader(row) {
+      const joined = row.join(' ').toLowerCase();
+      return /naam|name|organisation|organisatie|affiliat|institution/.test(joined);
+    }
+
+    async function loadSignatories() {
+      const listEl = document.getElementById('signatories-list');
+      const errEl  = document.getElementById('signatories-error');
+      listEl.innerHTML = '';
+      errEl.style.display = 'none';
+      errEl.textContent = '';
+
+      try {
+        const res = await fetch(SIGNATORIES_CSV, { cache: 'no-store' });
+        if (!res.ok) throw new Error(`Kon CSV niet laden: ${SIGNATORIES_CSV}`);
+
+        const csvText = await res.text();
+        const rows = parseCSV(csvText);
+        const data = (rows.length && looksLikeHeader(rows[0])) ? rows.slice(1) : rows;
+
+        const cleaned = data
+          .map(r => {
+            const cols = r.filter(x => x.trim() !== '');
+            const name = (cols[0] || '').trim();
+            const org  = (cols[1] || '').trim();
+            return { name, org };
+          })
+          .filter(x => x.name.length > 0);
+
+        cleaned.forEach(item => {
+          const li = document.createElement('li');
+          if (item.org) {
+            li.textContent = item.name + ' — ';
+            const span = document.createElement('span');
+            span.className = 'org';
+            span.textContent = item.org;
+            li.appendChild(span);
+          } else {
+            li.textContent = item.name;
+          }
+          listEl.appendChild(li);
+        });
+
+      } catch (e) {
+        const isFR = state.lang === 'fr';
+        errEl.style.display = 'block';
+        errEl.textContent = isFR
+          ? `Impossible de charger la liste des signataires. (${e.message})`
+          : `Kon de lijst met ondertekenaars niet laden. (${e.message})`;
+      }
+    }
+
+    document.getElementById('btn-lang-nl').addEventListener('click', () => { state.lang = 'nl'; loadAndRender(); });
+    document.getElementById('btn-lang-fr').addEventListener('click', () => { state.lang = 'fr'; loadAndRender(); });
+    document.getElementById('btn-doc-brief').addEventListener('click', () => { state.doc = 'brief'; window.scrollTo({ top: 0, behavior: 'smooth' }); loadAndRender(); });
+    document.getElementById('btn-doc-opinie').addEventListener('click', () => { state.doc = 'opinie'; window.scrollTo({ top: 0, behavior: 'smooth' }); loadAndRender(); });
+
+    loadAndRender();
+  </script>
+</body>
+</html>
