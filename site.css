@@ -392,3 +392,11 @@
         color:#000;
       }
     }
+	
+	.signatories{
+	  scroll-margin-top: 5.5rem;
+	}
+
+	#signatories-title{
+	  scroll-margin-top: 5.5rem;
+	}

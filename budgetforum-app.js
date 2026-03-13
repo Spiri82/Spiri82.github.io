@@ -133,11 +133,14 @@
     const metaLine = isFR ? 'Date de publication: 27 mars 2026' : 'Publicatiedatum: 27 maart 2026';
     const pdfHref = PDFS[state.doc][state.lang];
     const pdfLabel = isFR ? 'Télécharger le PDF' : 'PDF downloaden';
+	const jumpLabel = isFR ? 'Signataires' : 'Ondertekenaars';
     document.getElementById('doc-meta').innerHTML =
       `${escapeHTML(metaLine)} <span class="meta-sep">•</span> ` +
-      `<a href="${pdfHref}" download aria-label="${escapeHTML(pdfLabel)} (${state.doc.toUpperCase()}, ${state.lang.toUpperCase()})">${escapeHTML(pdfLabel)}</a>`;
-
-    const toLine = state.doc === 'brief'
+      `<a href="${pdfHref}" download aria-label="${escapeHTML(pdfLabel)} (${state.doc.toUpperCase()}, ${state.lang.toUpperCase()})">${escapeHTML(pdfLabel)}</a>`+
+	  `<span class="meta-sep">•</span> ` +
+	  `<a href="#signatories-title">${escapeHTML(jumpLabel)}</a>`;
+	
+	const toLine = state.doc === 'brief'
       ? (isFR ? 'À l’attention des ministres belges du Budget.' : 'Aan de Belgische ministers van Begroting.')
       : '';
     document.getElementById('doc-to').innerHTML = toLine;
