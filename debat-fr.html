@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Débat — Proposition de réforme du processus budgétaire belge</title>
+  <meta name="description" content="Débat et réactions autour de la proposition de réforme du processus budgétaire belge." />
+  <link rel="canonical" href="https://www.budgetforum.be/debat-fr.html" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Budgetforum" />
+  <meta property="og:locale" content="fr_BE" />
+  <meta property="og:title" content="Débat — Proposition de réforme du processus budgétaire belge" />
+  <meta property="og:description" content="Débat et réactions autour de la proposition de réforme du processus budgétaire belge." />
+  <meta property="og:url" content="https://www.budgetforum.be/debat-fr.html" />
+  <meta property="og:image" content="https://www.budgetforum.be/social/open-brief_fr.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Débat sur la réforme du processus budgétaire belge" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Débat — Proposition de réforme du processus budgétaire belge" />
+  <meta name="twitter:description" content="Débat et réactions autour de la proposition de réforme du processus budgétaire belge." />
+  <meta name="twitter:image" content="https://www.budgetforum.be/social/open-brief_fr.jpg" />
+  <meta name="twitter:image:alt" content="Débat sur la réforme du processus budgétaire belge" />
+  <meta name="twitter:site" content="@KevinSpiritus" />
+
+  <link rel="stylesheet" href="site.css" />
+</head>
+<body data-lang="fr" data-path="./debat-fr.html">
+  <a class="skip-link" id="skip-link" href="#content">Aller au contenu</a>
+  <div id="sr-status" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+  <header class="topbar">
+    <div class="topbar__inner">
+      <div class="stickytitle" id="stickytitle">Débat</div>
+
+      <div class="controls" role="group" aria-label="Sélections">
+        <div class="seg seg--doc" role="group" aria-label="Document">
+          <button type="button" id="btn-doc-brief" data-href="./open-brief-fr.html">Lettre ouverte</button>
+          <button type="button" id="btn-doc-opinie" data-href="./opinie-fr.html">Tribune</button>
+          <button type="button" id="btn-doc-debat" class="is-active" aria-pressed="true" data-href="./debat-fr.html">Débat</button>
+        </div>
+
+        <div class="seg seg--lang" role="group" aria-label="Langue">
+          <button type="button" id="btn-lang-nl" aria-pressed="false" data-href="./debat-nl.html">NL</button>
+          <button type="button" id="btn-lang-fr" class="is-active" aria-pressed="true" data-href="./debat-fr.html">FR</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap" id="main-content">
+    <section class="paper">
+      <header class="dochead">
+        <p class="dochead__kicker">Débat</p>
+        <h1 class="dochead__title">Proposition de réforme du processus budgétaire belge</h1>
+        <p class="dochead__intro">Débat, réactions et contributions.</p>
+      </header>
+
+      <article id="content" class="content" tabindex="-1">
+        <p>Dès que des contributions au débat seront disponibles, elles apparaîtront ici.</p>
+      </article>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      document.documentElement.lang = 'fr';
+      const buttons = document.querySelectorAll('[data-href]');
+      buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const href = btn.getAttribute('data-href');
+          if (href) window.location.href = href;
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Debat — Voorstel tot hervorming van het Belgische begrotingsproces</title>
+  <meta name="description" content="Debat en reacties over het voorstel tot hervorming van het Belgische begrotingsproces." />
+  <link rel="canonical" href="https://www.budgetforum.be/debat-nl.html" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Budgetforum" />
+  <meta property="og:locale" content="nl_BE" />
+  <meta property="og:title" content="Debat — Voorstel tot hervorming van het Belgische begrotingsproces" />
+  <meta property="og:description" content="Debat en reacties over het voorstel tot hervorming van het Belgische begrotingsproces." />
+  <meta property="og:url" content="https://www.budgetforum.be/debat-nl.html" />
+  <meta property="og:image" content="https://www.budgetforum.be/social/open-brief_nl.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Debat over de hervorming van het Belgische begrotingsproces" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Debat — Voorstel tot hervorming van het Belgische begrotingsproces" />
+  <meta name="twitter:description" content="Debat en reacties over het voorstel tot hervorming van het Belgische begrotingsproces." />
+  <meta name="twitter:image" content="https://www.budgetforum.be/social/open-brief_nl.jpg" />
+  <meta name="twitter:image:alt" content="Debat over de hervorming van het Belgische begrotingsproces" />
+  <meta name="twitter:site" content="@KevinSpiritus" />
+
+  <link rel="stylesheet" href="site.css" />
+</head>
+<body data-lang="nl" data-path="./debat-nl.html">
+  <a class="skip-link" id="skip-link" href="#content">Ga naar inhoud</a>
+  <div id="sr-status" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+  <header class="topbar">
+    <div class="topbar__inner">
+      <div class="stickytitle" id="stickytitle">Debat</div>
+
+      <div class="controls" role="group" aria-label="Selecties">
+        <div class="seg seg--doc" role="group" aria-label="Document">
+          <button type="button" id="btn-doc-brief" data-href="./open-brief-nl.html">Open brief</button>
+          <button type="button" id="btn-doc-opinie" data-href="./opinie-nl.html">Opinie</button>
+          <button type="button" id="btn-doc-debat" class="is-active" aria-pressed="true" data-href="./debat-nl.html">Debat</button>
+        </div>
+
+        <div class="seg seg--lang" role="group" aria-label="Taal">
+          <button type="button" id="btn-lang-nl" class="is-active" aria-pressed="true" data-href="./debat-nl.html">NL</button>
+          <button type="button" id="btn-lang-fr" aria-pressed="false" data-href="./debat-fr.html">FR</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap" id="main-content">
+    <section class="paper">
+      <header class="dochead">
+        <p class="dochead__kicker">Debat</p>
+        <h1 class="dochead__title">Voorstel tot hervorming van het Belgische begrotingsproces</h1>
+        <p class="dochead__intro">Debat, reacties en verdere bijdragen.</p>
+      </header>
+
+      <article id="content" class="content" tabindex="-1">
+        <p>Zodra er debatstukken beschikbaar zijn, zullen die hier verschijnen.</p>
+      </article>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      document.documentElement.lang = 'nl';
+      const buttons = document.querySelectorAll('[data-href]');
+      buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const href = btn.getAttribute('data-href');
+          if (href) window.location.href = href;
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

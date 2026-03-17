@@ -13,6 +13,18 @@
     'opinie:fr': './opinie-fr.html'
   };
 
+  const DEBATE_BUTTON = {
+    enabled: true,
+    href: {
+      nl: './debat-nl.html',
+      fr: './debat-fr.html'
+    },
+    label: {
+      nl: 'Debat',
+      fr: 'Débat'
+    }
+  };
+
   const SOURCES = {
     brief:  { nl: './content/open-brief.nl.md', fr: './content/open-brief.fr.md' },
     opinie: { nl: './content/opinie.nl.md',     fr: './content/opinie.fr.md' }
@@ -111,6 +123,7 @@
 
   function setHeaderCopy() {
     const isFR = state.lang === 'fr';
+    const debateBtn = document.getElementById('btn-doc-debat');
 
     document.querySelector('.controls').setAttribute('aria-label', isFR ? 'Sélections' : 'Selecties');
     document.querySelector('.seg--doc').setAttribute('aria-label', 'Document');
@@ -119,6 +132,13 @@
 
     document.getElementById('btn-doc-brief').textContent = isFR ? 'Lettre ouverte' : 'Open brief';
     document.getElementById('btn-doc-opinie').textContent = isFR ? 'Tribune' : 'Opinie';
+
+    if (debateBtn) {
+      debateBtn.textContent = DEBATE_BUTTON.label[state.lang];
+      debateBtn.hidden = !DEBATE_BUTTON.enabled;
+      debateBtn.setAttribute('aria-hidden', DEBATE_BUTTON.enabled ? 'false' : 'true');
+      debateBtn.tabIndex = DEBATE_BUTTON.enabled ? 0 : -1;
+    }
 
     const docLabel = state.doc === 'brief'
       ? (isFR ? 'Lettre ouverte' : 'Open brief')
@@ -384,6 +404,15 @@
   document.getElementById('btn-lang-fr').addEventListener('click', () => navigateTo(state.doc, 'fr'));
   document.getElementById('btn-doc-brief').addEventListener('click', () => navigateTo('brief', state.lang));
   document.getElementById('btn-doc-opinie').addEventListener('click', () => navigateTo('opinie', state.lang));
+
+  const debateBtn = document.getElementById('btn-doc-debat');
+  if (debateBtn) {
+    debateBtn.addEventListener('click', () => {
+      if (!DEBATE_BUTTON.enabled) return;
+      const target = DEBATE_BUTTON.href[state.lang];
+      if (target) window.location.href = target;
+    });
+  }
 
   loadAndRender();
 })();
