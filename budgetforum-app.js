@@ -14,7 +14,7 @@
   };
 
   const DEBATE_BUTTON = {
-    enabled: false,
+    enabled: true,
     href: {
       nl: './debat-nl.html',
       fr: './debat-fr.html'
@@ -55,12 +55,12 @@
 
   const OPINION_LINKS = {
     nl: [
-      { label: 'De Tijd', href: '#link-de-tijd' },
-      { label: 'Knack', href: '#link-knack' }
+      { label: 'De Tijd', href: 'https://www.tijd.be/opinie/algemeen/maak-de-begroting-minder-afhankelijk-van-de-korte-termijn/10654245.html' },
+      { label: 'Knack', href: 'https://www.knack.be/nieuws/belgie/politiek/voorstel-tot-hervorming-van-het-belgische-begrotingsproces/' }
     ],
     fr: [
-      { label: "L\'Echo", href: '#link-lecho' },
-      { label: 'Le Vif', href: '#link-levif' }
+      { label: "L\'Echo", href: 'https://www.lecho.be/opinions/general/opinion-pour-en-finir-avec-les-calamiteux-conclaves-budgetaires-nocturnes/10654232.html' },
+      { label: 'Le Vif', href: 'https://www.levif.be/opinions/cartes-blanches/proposition-de-reforme-du-processus-budgetaire-belge/' }
     ]
   };
 
