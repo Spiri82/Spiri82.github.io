@@ -14,7 +14,7 @@
   };
 
   const DEBATE_BUTTON = {
-    enabled: true,
+    enabled: false,
     href: {
       nl: './debat-nl.html',
       fr: './debat-fr.html'
