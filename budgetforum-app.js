@@ -86,7 +86,6 @@
     }
   };
 
-  const EMBARGO_END_ISO = '2026-03-27T06:00:00+01:00';
   const md = window.markdownit({ html: false, linkify: true, typographer: true });
 
   let state = { lang: initialLang, doc: initialDoc };
@@ -309,53 +308,10 @@
     }
   }
 
-  async function getAuthoritativeNow() {
-    try {
-      const r = await fetch(window.location.href, { method: 'HEAD', cache: 'no-store' });
-      const dateHdr = r.headers.get('date');
-      if (dateHdr) {
-        const d = new Date(dateHdr);
-        if (!isNaN(d.getTime())) return d;
-      }
-    } catch (e) {}
-
-    try {
-      const r = await fetch('https://worldtimeapi.org/api/timezone/Europe/Brussels', { cache: 'no-store' });
-      if (r.ok) {
-        const data = await r.json();
-        const d = new Date(data.datetime);
-        if (!isNaN(d.getTime())) return d;
-      }
-    } catch (e) {}
-
-    return new Date();
-  }
-
-  async function renderEmbargoBanner() {
-    const el = document.getElementById('embargo');
-    if (!el) return;
-
-    const now = await getAuthoritativeNow();
-    const embargoEnd = new Date(EMBARGO_END_ISO);
-    const underEmbargo = now.getTime() < embargoEnd.getTime();
-
-    if (!underEmbargo) {
-      el.style.display = 'none';
-      el.innerHTML = '';
-      return;
-    }
-
-    el.innerHTML = state.lang === 'fr'
-      ? `<strong>Sous embargo</strong> jusqu’au vendredi 27 mars 2026 à 6 h 00 (heure belge).`
-      : `<strong>Onder embargo</strong> tot vrijdag 27 maart 2026, 06:00 (Belgische tijd).`;
-    el.style.display = 'block';
-  }
-
   async function loadAndRender() {
     setActiveButtons();
     setHeaderCopy();
     renderPubNote();
-    await renderEmbargoBanner();
 
     const path = SOURCES[state.doc][state.lang];
     const contentEl = document.getElementById('content');

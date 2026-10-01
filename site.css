@@ -199,20 +199,6 @@
     }
     .dochead__to strong{ font-weight:600; }
 
-    .embargo{
-      display:none;
-      max-width:var(--measure);
-      margin:0 auto 16px auto;
-      padding:12px 14px;
-      border:1px solid rgba(17,24,39,.18);
-      background:rgba(245,158,11,.10);
-      border-radius:12px;
-      font-family:var(--ui);
-      color:var(--text);
-      font-size:.95rem;
-    }
-    .embargo strong{ font-weight:700; }
-
     .dochead__meta{
       max-width:var(--measure);
       margin:8px auto 16px auto;
@@ -348,7 +334,6 @@
       .topbar,
       .controls,
       .seg,
-      .embargo,
       .dochead__meta a,
       .dochead__meta .meta-sep{
         display:none !important;
